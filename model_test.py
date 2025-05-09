@@ -8,6 +8,9 @@ from utils import is_dir_path
 from Dataset import LungTestDataset
 from UNet_nn import DoubleConv, Down, Up, UNet
 
+import matplotlib
+matplotlib.use('Agg')
+
 # Allow duplicate OpenMp library loading (common workaround for MKL/OpenMP conflicts on some systems)
 os.environ["KMP_DUPLICATE_LIB_OK"] = "TRUE"
 
@@ -24,9 +27,27 @@ if __name__ == '__main__':
     model.load_state_dict(torch.load('unet_model.pth'))
     model.to(device)
     model.eval()
+
+    previous_patient_id = None
     idx = 1
+
+    desktop_path = os.path.join(os.path.expanduser("~"), "Desktop")
+    Set_save_path = "" # TODO: Please manually set this path before running
+    if not Set_save_path:
+        raise ValueError(" You must set 'Set_save_path' before running this script.")
+
     with torch.no_grad():
         for ct, meta_data in test_loader:
+            patient_id = meta_data['pid']
+
+            if patient_id != previous_patient_id:
+                patient_folder = os.path.join(Set_save_path, f"patient_{patient_id}")
+                os.makedirs(patient_folder, exist_ok=True)
+
+                idx = 1
+
+            ct_filename = f"pred_slice_{idx}.png"
+
             ct = ct.to(device)
             output = model(ct)
             ct_normalized = ct[0].cpu().squeeze(0)
@@ -45,11 +66,9 @@ if __name__ == '__main__':
             for ax in axs:
                 ax.axis('off')
 
-            desktop_path = ""  # TODO: Please manually set this path before running
-            if not desktop_path:
-                raise ValueError(" You must set 'desktop_path' before running this script.")
-            
-            save_path = os.path.join(desktop_path, f"pred_slice_{idx}.png")
+            save_path = os.path.join(patient_folder, ct_filename)
             plt.savefig(save_path)
             plt.close()
+
+            previous_patient_id = patient_id
             idx += 1

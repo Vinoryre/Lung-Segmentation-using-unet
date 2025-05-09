@@ -28,6 +28,11 @@ mask_threshold = parser.getint('prepare_dataset', 'Mask_Threshold')
 confidence_level = parser.getfloat('pylidc','confidence_level')
 padding = parser.getint('pylidc', 'padding_size')
 
+# db_path = Path.home() / ".pylidc" / "pylidc.sqlite"
+# if db_path.exists():
+#     print("Deleting pylidc database to force rebuild...")
+#     os.remove(db_path)
+
 class MakeDataSet:
     def __init__(self, LIDC_Patients_list, LUNG_CT_TEST_DIR, mask_threshold, padding, confidence_level):
         self.IDRI_list = LIDC_Patients_list
@@ -44,7 +49,6 @@ class MakeDataSet:
         for patient in tqdm(self.IDRI_list):
             pid = patient
             scan = pl.query(pl.Scan).filter(pl.Scan.patient_id == pid).first()
-
             vol = scan.to_volume()
             print("Patient ID: {} Dicom Shape: {}".format(pid, vol.shape))
 

@@ -10,7 +10,7 @@ if __name__ == "__main__":
 
     # Define dataset paths and processing settings
     config['prepare_dataset'] = {
-        'LIDC_DICOM_PATH': 'H:/LIDC-IDRI/1_lung_segmentation_test/manifest-1745761260157/LIDC-IDRI', # Absolute path for the LIDC dataset
+        'LIDC_DICOM_PATH': 'H:/LIDC-IDRI/3_lung_segmentation_test/manifest-1746794304789/LIDC-IDRI', # Absolute path for the LIDC dataset
         'Lung_CT_PATH': './mydata/Image/ct', # Store the original CT images after data processing and numbering
         'Lung_IMAGE_PATH': './mydata/Image/lung', # Stores the lung segementation mask of the corresponding CT image, not binarized
         'Lung_CT_TEST_PATH': './mydata/Image_test/ct',# This is the folder I use to test the trained model to predict the lung segmentation of a patient's CT image. It stores all the slices of the patient's CT.

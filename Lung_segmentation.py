@@ -28,6 +28,11 @@ if __name__ == '__main__':
     # Initialize U-Net model
     model = UNet(n_channels=1, n_classes=1)
 
+    desktop_path = os.path.join(os.path.expanduser("~"), "Desktop")
+    Set_save_path = ""  # TODO: Please manually set this path before running
+    if not Set_save_path:
+        raise ValueError(" You must set 'Set_save_path' before running this script.")
+
     # Dice Loss function for training
     def dice_loss(pred, target, smooth = 1e-6):
         pred = torch.sigmoid(pred)
@@ -123,12 +128,7 @@ if __name__ == '__main__':
                     for ax in axs:
                         ax.axis('off')
 
-                    # Save the figure to desktop
-                    desktop_path = "" # TODO: Please manually set this path before running
-                    if not desktop_path:
-                        raise ValueError(" You must set 'desktop_path' before running this script.")
-
-                    save_path = os.path.join(desktop_path, f"pred_epoch_{epoch+1}.png")
+                    save_path = os.path.join(Set_save_path, f"pred_epoch_{epoch+1}.png")
                     plt.savefig(save_path)
                     plt.close()
                     saved = True

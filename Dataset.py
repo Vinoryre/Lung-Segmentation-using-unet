@@ -75,6 +75,8 @@ class LungTestDataset(Dataset):
 
         # List to store the paths to CT scans
         self.data_list = []
+        # List to store the store patient ids (pid)
+        self.data_patient_ids = []
 
         # Iterate through patients' directories to gather CT scan file paths
         for pid in os.listdir(ct_root):
@@ -84,6 +86,7 @@ class LungTestDataset(Dataset):
             for fname in os.listdir(ct_pid_dir):
                 ct_path = os.path.join(ct_pid_dir, fname) # Path to CT file
                 self.data_list.append(ct_path) # Append the CT file path to the list
+                self.data_patient_ids.append(pid) # Store the patient id (pid)
 
     # Return the total number of items in the dataset
     def __len__(self):
@@ -92,6 +95,7 @@ class LungTestDataset(Dataset):
     # Fetch a single CT scan from the dataset
     def __getitem__(self, idx):
         ct_path = self.data_list[idx] # Get the path for CT scan
+        pid = self.data_patient_ids[idx] # Get the patient id (pid) corresponding to this CT scan
         ct = np.load(ct_path).astype(np.float32) # Load CT scan as numpy array
 
         # Normalize CT scan to the range [0, 1]
@@ -107,6 +111,6 @@ class LungTestDataset(Dataset):
             ct_normalized = self.transform(ct_normalized)
 
         # Return CT scan and metadata (min and max values of the CT scans)
-        meta_data = {'ct_min': ct_min, 'ct_max': ct_max}
+        meta_data = {'ct_min': ct_min, 'ct_max': ct_max, 'pid': pid}
         return ct_normalized, meta_data
 
